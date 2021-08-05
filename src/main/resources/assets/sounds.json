@@ -1,0 +1,8 @@
+{
+  "my_sound": {
+    "subtitle": "gas gas gas",
+    "sounds": [
+      "tutorial:my_sound"
+    ]
+  }
+}
