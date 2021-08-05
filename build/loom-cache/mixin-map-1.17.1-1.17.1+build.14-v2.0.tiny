@@ -1,0 +1,3 @@
+v1	named	intermediary
+FIELD	net/neednot/mixin/ChatScannerMixin	Lnet/minecraft/client/MinecraftClient;	client	field_2062
+FIELD	net/neednot/mixin/LevelUpMixin	Lnet/minecraft/client/MinecraftClient;	client	field_3937
