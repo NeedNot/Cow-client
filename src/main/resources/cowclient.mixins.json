@@ -7,7 +7,8 @@
   ],
   "client": [
     "LevelUpMixin",
-    "ChatScannerMixin"
+    "ChatScannerMixin",
+    "MainMenuMixin"
   ],
   "injectors": {
     "defaultRequire": 1
