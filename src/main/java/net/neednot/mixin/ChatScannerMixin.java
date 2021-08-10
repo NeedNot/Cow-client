@@ -44,7 +44,9 @@ public class ChatScannerMixin {
                     say(getCoords());
                 }
                 else {
-                    say("ez");
+                    if (!message.getString().contains("experience points") && !message.getString().contains("experience levels")) {
+                        say("ez");
+                    }
                 }
             }
             else {

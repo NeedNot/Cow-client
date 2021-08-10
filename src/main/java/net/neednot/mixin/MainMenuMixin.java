@@ -17,6 +17,7 @@ import net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen;
 import net.minecraft.client.gui.screen.world.SelectWorldScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
+import net.minecraft.client.gui.widget.TexturedButtonWidget;
 import net.minecraft.client.network.ServerAddress;
 import net.minecraft.client.network.ServerInfo;
 import net.minecraft.client.render.GameRenderer;
@@ -82,8 +83,12 @@ public abstract class MainMenuMixin extends Screen {
 
     @Inject(at = @At("HEAD"), method = "initWidgetsNormal")
     public void addCustomButton(int y, int spacingY, CallbackInfo info) {
+        double d = this.height * 0.1;
+        int iy = (int) d;
 
-        this.addDrawableChild(new ButtonWidget(this.width / 2 - 100, this.height / 4 + 20 + -16 +60, 98, 20, new LiteralText("Modern SMP"), (buttonWidgetx) -> {
+        Identifier SIDEBAR = new Identifier("cowclient", "textures/gui/side_bar.png");
+
+        this.addDrawableChild(new ButtonWidget(this.width / 40, iy + 25, 98, 20, new LiteralText("Modern SMP"), (buttonWidget) -> {
 
             Screen screen = new TitleScreen();
             MinecraftClient client = MinecraftClient.getInstance();
@@ -91,24 +96,55 @@ public abstract class MainMenuMixin extends Screen {
             ServerInfo sinfo = new ServerInfo("Modern SMP", "184.95.44.42:25598", false);
             ConnectScreen.connect(screen, client, serverAddress, sinfo);
         }));
+
+
+        this.addDrawableChild(new TexturedButtonWidget(this.width / 2 - 100, this.height/8, 200, 20, 0, 0, 0, SIDEBAR, 200, 200, (buttonWidget) -> {
+
+        }, new LiteralText("hello world")));
+
+
     }
     @Inject(method = "init", at = @At("RETURN"))
     private void modifySize(CallbackInfo ci) {
         for (ClickableWidget button : Screens.getButtons(this)) {
+
+            double d = this.height * 0.1;
+            int y = (int) d;
+
             if (button.getMessage().getString().equals(I18n.translate("menu.singleplayer"))) {
                 button.setWidth(98);
-                button.x = this.width / 2 - 100;
-                button.y = this.height / 4 + 20 + -16 + 35;
+                button.x = this.width / 40;
+                button.y = y;
             }
             if (button.getMessage().getString().equals(I18n.translate("menu.online"))) {
+                button.setMessage(new LiteralText("Realms"));
                 button.setWidth(98);
-                button.x = this.width / 2 + 2;
-                button.y = this.height / 4 + 20 + -16 + 60;
+                button.x = this.width / 40;
+                button.y = y + 50;
+            }
+            if (button.getMessage().getString().equals(I18n.translate("menu.options"))) {
+                button.setMessage(new LiteralText("Settings"));
+                button.setWidth(98);
+                button.x = this.width / 40;
+                button.y = y + 75;
+            }
+            if (button.getMessage().getString().equals(I18n.translate("menu.quit"))) {
+                button.setMessage(new LiteralText("Exit"));
+                button.setWidth(98);
+                button.x = this.width / 40;
+                button.y = this.height - this.height / 9;
             }
             if (button.getMessage().getString().equals(I18n.translate("menu.multiplayer"))) {
                 button.setWidth(0);
-                button.x = this.width / 2 +2;
-                button.y = this.height / 4 + 20 + -16 + 4000;
+                button.y = this.height / 4 + 20 - 16 + 4000;
+            }
+            if (button.getMessage().getString().equals(I18n.translate("narrator.button.accessibility"))) {
+                button.setWidth(0);
+                button.y = this.height + 40000;
+            }
+            if (button.getMessage().getString().equals(I18n.translate("narrator.button.language"))) {
+                button.setWidth(0);
+                button.y = this.height + 40000;
             }
         }
     }
@@ -125,36 +161,35 @@ public abstract class MainMenuMixin extends Screen {
         int j = this.width / 2 - 137;
 
         Identifier CUSTOM_FARM_BACKGROUND = new Identifier("cowclient","textures/gui/farm_background.png");
+        Identifier SIDEBAR = new Identifier("cowclient", "textures/gui/side_bar.png");
+        Identifier LOGO = new Identifier("cowclient", "textures/gui/logo.png");
 
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderTexture(0, CUSTOM_FARM_BACKGROUND);
         RenderSystem.enableBlend();
         RenderSystem.blendFunc(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, this.doBackgroundFade ? (float)MathHelper.ceil(MathHelper.clamp(f, 0.0F, 1.0F)) : 1.0F);
-        drawTexture(matrices, 0, 0, this.width, this.height, 0.0F, 0.0F, 16, 128, 16, 128);
+
+        drawTexture(matrices, 0, 0, this.width, this.height, 0F, 0.0F, 16, 128, 16, 128);
+
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderTexture(0, LOGO);
+
+        double d = this.height * 0.1;
+        int i = (int) d;
+
+        drawTexture(matrices, width/2 - 748/10, i, 0.0F, 0.0F, 748/5, 430/5, 748/5, 430/5);
+
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.setShaderTexture(0, SIDEBAR);
+
+        Screen.drawTexture(matrices, 0, 0, 0, 0, 98 + this.width / 20, height, 120, height);
+
         float g = this.doBackgroundFade ? MathHelper.clamp(f - 1.0F, 0.0F, 1.0F) : 1.0F;
         int l = MathHelper.ceil(g * 255.0F) << 24;
         if ((l & -67108864) != 0) {
-            RenderSystem.setShader(GameRenderer::getPositionTexShader);
-            RenderSystem.setShaderTexture(0, MINECRAFT_TITLE_TEXTURE);
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, g);
-            if (this.isMinceraft) {
-                this.drawWithOutline(j, 30, (x, y) -> {
-                    this.drawTexture(matrices, x + 0, y, 0, 0, 99, 44);
-                    this.drawTexture(matrices, x + 99, y, 129, 0, 27, 44);
-                    this.drawTexture(matrices, x + 99 + 26, y, 126, 0, 3, 44);
-                    this.drawTexture(matrices, x + 99 + 26 + 3, y, 99, 0, 26, 44);
-                    this.drawTexture(matrices, x + 155, y, 0, 45, 155, 44);
-                });
-            } else {
-                this.drawWithOutline(j, 30, (x, y) -> {
-                    this.drawTexture(matrices, x + 0, y, 0, 0, 155, 44);
-                    this.drawTexture(matrices, x + 155, y, 0, 45, 155, 44);
-                });
-            }
-
-            RenderSystem.setShaderTexture(0, EDITION_TITLE_TEXTURE);
-            drawTexture(matrices, j + 88, 67, 0.0F, 0.0F, 98, 14, 128, 16);
 
             String string = "Minecraft " + SharedConstants.getGameVersion().getName();
             if (this.client.isDemo()) {
@@ -183,7 +218,6 @@ public abstract class MainMenuMixin extends Screen {
             if (this.areRealmsNotificationsEnabled() && g >= 1.0F) {
                 this.realmsNotificationGui.render(matrices, mouseX, mouseY, delta);
             }
-
         }
     }
 }
